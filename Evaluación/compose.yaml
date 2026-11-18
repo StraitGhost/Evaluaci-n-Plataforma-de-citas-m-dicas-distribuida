@@ -1,0 +1,47 @@
+services:
+  agenda:
+    build: ./agenda
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+      RETARDO_MS: "0"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  notificaciones:
+    build: ./notificaciones
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: "4000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "const s=require('net').connect(4000,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),2000)"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  citas:
+    build: ./citas
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      AGENDA_URL: "http://agenda:3001"
+      AGENDA_TIMEOUT_MS: "2000"
+      NOTIFICACIONES_HOST: "notificaciones"
+      NOTIFICACIONES_PORT: "4000"
+      NOTIFICACIONES_TIMEOUT_MS: "1000"
+    depends_on:
+      agenda:
+        condition: service_healthy
+      notificaciones:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5

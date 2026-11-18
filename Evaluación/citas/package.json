@@ -1,16 +1,12 @@
 {
-  "name": "pedidos",
+  "name": "citas",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch index.ts",
-    "build": "tsc"
+    "dev": "tsx watch src/index.ts"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
